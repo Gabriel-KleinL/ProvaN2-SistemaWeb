@@ -3,7 +3,7 @@ Worker Simples - Processa Fila de Análises
 """
 import time
 from database import init_db
-from funcoes import processar_fila
+from funcao2_processar import processar_fila
 
 
 def main():

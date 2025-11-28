@@ -4,7 +4,8 @@ API Flask Simples - Análise de Sentimentos
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database import init_db
-from funcoes import cadastrar_analise, buscar_resultado
+from funcao1_cadastrar import cadastrar_analise
+from funcao3_buscar import buscar_resultado
 
 app = Flask(__name__)
 CORS(app)
@@ -73,7 +74,7 @@ def api_result(analysis_id):
 @app.route('/api/status')
 def api_status():
     """Status do sistema"""
-    from funcoes import fila_analises
+    from fila import fila_analises
 
     return jsonify({
         'sistema': 'online',
