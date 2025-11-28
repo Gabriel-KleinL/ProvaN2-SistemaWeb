@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitetura - Sistema de Análise de Sentimentos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+
+        .architecture {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .layer {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+        }
+
+        .layer-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .components {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .component {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .component:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.2);
+        }
+
+        .component-name {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .component-desc {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: -15px 0;
+        }
+
+        .functions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .function-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .function-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .function-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .function-desc {
+            font-size: 0.95em;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .schemas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .schema-card {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .schema-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .schema-field {
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .flow {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+
+        .step-text {
+            flex: 1;
+            color: #2c3e50;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ Arquitetura do Sistema</h1>
+        <p style="text-align: center; color: #666; font-size: 1.2em; margin-bottom: 40px;">
+            Sistema de Análise de Sentimentos em Tempo Real
+        </p>
+
+        <div class="section-title">📊 Fluxo de Dados</div>
+
+        <div class="architecture">
+            <div class="layer">
+                <div class="layer-title">📱 Cliente</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-name">Postman / HTTP</div>
+                        <div class="component-desc">Envia requisições REST</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow">⬇️</div>
+
+            <div class="layer">
+                <div class="layer-title">🌐 API Flask</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-name">POST /api/analyze</div>
+                        <div class="component-desc">Cadastra análise</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-name">GET /api/result/:id</div>
+                        <div class="component-desc">Busca resultado</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-name">GET /api/status</div>
+                        <div class="component-desc">Status da fila</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow">⬇️</div>
+
+            <div class="layer">
+                <div class="layer-title">⚙️ Fila de Processamento</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-name">Queue (Python)</div>
+                        <div class="component-desc">Tarefas pendentes</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow">⬇️</div>
+
+            <div class="layer">
+                <div class="layer-title">⚡ Worker</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-name">Processador</div>
+                        <div class="component-desc">Análise de sentimentos</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow">⬇️</div>
+
+            <div class="layer">
+                <div class="layer-title">💾 Banco de Dados</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-name">SQLite</div>
+                        <div class="component-desc">2 schemas (users, analyses)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">🔧 3 Funções Principais</div>
+
+        <div class="functions">
+            <div class="function-card">
+                <div class="function-number">1️⃣</div>
+                <div class="function-name">cadastrar_analise()</div>
+                <div class="function-desc">
+                    • Gera UUID único<br>
+                    • Salva no banco<br>
+                    • Adiciona na fila<br>
+                    • Retorna ID da análise
+                </div>
+            </div>
+
+            <div class="function-card">
+                <div class="function-number">2️⃣</div>
+                <div class="function-name">processar_fila()</div>
+                <div class="function-desc">
+                    • Pega tarefa da fila<br>
+                    • Analisa sentimento<br>
+                    • Calcula score (-1 a +1)<br>
+                    • Atualiza banco
+                </div>
+            </div>
+
+            <div class="function-card">
+                <div class="function-number">3️⃣</div>
+                <div class="function-name">buscar_resultado()</div>
+                <div class="function-desc">
+                    • Consulta banco pelo ID<br>
+                    • Retorna análise completa<br>
+                    • Status, sentimento, score<br>
+                    • Texto original
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">🗄️ 2 Schemas do Banco</div>
+
+        <div class="schemas">
+            <div class="schema-card">
+                <div class="schema-title">👥 users</div>
+                <div class="schema-field"><strong>id:</strong> INTEGER (PK)</div>
+                <div class="schema-field"><strong>email:</strong> TEXT (UNIQUE)</div>
+                <div class="schema-field"><strong>password_hash:</strong> TEXT</div>
+                <div class="schema-field"><strong>created_at:</strong> TIMESTAMP</div>
+            </div>
+
+            <div class="schema-card">
+                <div class="schema-title">📊 analyses</div>
+                <div class="schema-field"><strong>id:</strong> TEXT (PK, UUID)</div>
+                <div class="schema-field"><strong>user_id:</strong> INTEGER (FK)</div>
+                <div class="schema-field"><strong>text:</strong> TEXT</div>
+                <div class="schema-field"><strong>sentiment:</strong> TEXT</div>
+                <div class="schema-field"><strong>score:</strong> REAL (-1 a +1)</div>
+                <div class="schema-field"><strong>status:</strong> TEXT</div>
+                <div class="schema-field"><strong>created_at:</strong> TIMESTAMP</div>
+            </div>
+        </div>
+
+        <div class="section-title">🔄 Fluxo Completo</div>
+
+        <div class="flow">
+            <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-text">Cliente envia POST com texto para análise</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-text">API chama <strong>cadastrar_analise()</strong> - Salva no banco com status "pending"</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-text">Tarefa é adicionada na fila de processamento</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-text">Worker pega tarefa da fila</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-text">Worker chama <strong>processar_fila()</strong> - Analisa sentimento do texto</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">6</div>
+                <div class="step-text">Resultado salvo no banco com status "completed"</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">7</div>
+                <div class="step-text">Cliente faz GET para buscar resultado</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-number">8</div>
+                <div class="step-text">API chama <strong>buscar_resultado()</strong> - Retorna análise completa</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666;">
+            <p style="font-size: 1.1em;">Sistema de Análise de Sentimentos</p>
+            <p style="margin-top: 10px;">3 Funções • 2 Schemas • Flask + SQLite</p>
+        </div>
+    </div>
+</body>
+</html>
