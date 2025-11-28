@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitetura - Sistema de Análise de Sentimentos</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #232F3E;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #FF9900;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .info-box h3 {
+            margin-top: 0;
+            color: #232F3E;
+        }
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .color-box {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            margin-right: 10px;
+            border: 2px solid #232F3E;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        .print-button {
+            background: #FF9900;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .print-button:hover {
+            background: #e68a00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        @media print {
+            body {
+                background: white;
+            }
+            .print-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ Arquitetura do Sistema</h1>
+        <div class="subtitle">Sistema de Análise de Sentimentos em Tempo Real</div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Componentes</div>
+                <div class="stat-number">9</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Camadas</div>
+                <div class="stat-number">6</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Endpoints</div>
+                <div class="stat-number">18+</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Integrações</div>
+                <div class="stat-number">12+</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📊 Visão Geral</h3>
+            <p>Arquitetura moderna de microserviços com processamento assíncrono, cache distribuído e alta disponibilidade. Inspirada nas melhores práticas da AWS Well-Architected Framework.</p>
+        </div>
+
+        <button class="print-button" onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button>
+
+        <div class="mermaid">
+graph TB
+    subgraph "🖥️ Cliente / Presentation Layer"
+        Client[fa:fa-laptop Cliente<br/>Postman / HTTP Client]
+    end
+
+    subgraph "🌐 API Gateway Layer"
+        LB[fa:fa-network-wired Load Balancer<br/>Nginx/HAProxy]
+        API1[fa:fa-server API Flask 1]
+        API2[fa:fa-server API Flask 2]
+        API3[fa:fa-server API Flask 3]
+
+        LB --> API1
+        LB --> API2
+        LB --> API3
+    end
+
+    subgraph "🛡️ Middleware Layer"
+        Auth[fa:fa-shield-alt JWT Auth<br/>Middleware]
+        RateLimit[fa:fa-tachometer-alt Rate Limiter<br/>60/min 1000/hr]
+        CORS[fa:fa-globe CORS<br/>Handler]
+        Validator[fa:fa-check-circle Request<br/>Validator]
+    end
+
+    subgraph "⚙️ Service Layer"
+        AuthSvc[fa:fa-key Auth Service<br/>Register/Login/Token]
+        SentimentSvc[fa:fa-brain Sentiment<br/>Analyzer]
+        CacheSvc[fa:fa-memory Cache Service<br/>In-Memory/Redis]
+        QueueSvc[fa:fa-list Queue Manager<br/>Priority Queue]
+        WebhookSvc[fa:fa-bell Webhook Service<br/>HTTP Notifications]
+        MetricsSvc[fa:fa-chart-line Metrics Service<br/>Analytics]
+    end
+
+    subgraph "⚡ Worker Layer"
+        Worker1[fa:fa-cog Worker 1<br/>Sentiment Processing]
+        Worker2[fa:fa-cog Worker 2<br/>Sentiment Processing]
+        Worker3[fa:fa-cog Worker 3<br/>Sentiment Processing]
+    end
+
+    subgraph "💾 Data Layer"
+        DB[(fa:fa-database SQLite/PostgreSQL<br/>Primary DB)]
+        CacheStore[(fa:fa-hdd Redis Cache<br/>Distributed)]
+        QueueStore[(fa:fa-folder RabbitMQ/Queue<br/>Message Broker)]
+    end
+
+    subgraph "🔗 External Integrations"
+        Webhook1[fa:fa-webhook Webhook 1<br/>External System]
+        Webhook2[fa:fa-webhook Webhook 2<br/>External System]
+        Monitoring[fa:fa-chart-bar Monitoring<br/>Prometheus/Grafana]
+    end
+
+    Client -->|HTTPS| LB
+
+    API1 --> Auth
+    API1 --> RateLimit
+    API1 --> CORS
+    API1 --> Validator
+
+    Auth --> AuthSvc
+    RateLimit --> CacheSvc
+
+    AuthSvc --> DB
+
+    API1 -->|Submit Analysis| QueueSvc
+    API1 -->|Check Cache| CacheSvc
+    API1 -->|Get Metrics| MetricsSvc
+
+    QueueSvc --> QueueStore
+    CacheSvc --> CacheStore
+
+    Worker1 -->|Poll Queue| QueueStore
+    Worker2 -->|Poll Queue| QueueStore
+    Worker3 -->|Poll Queue| QueueStore
+
+    Worker1 --> SentimentSvc
+    Worker1 --> DB
+    Worker1 --> CacheSvc
+    Worker1 --> WebhookSvc
+
+    SentimentSvc -->|NLP Processing| Worker1
+
+    WebhookSvc -->|POST| Webhook1
+    WebhookSvc -->|POST| Webhook2
+
+    MetricsSvc --> DB
+
+    API1 -.->|Metrics| Monitoring
+    Worker1 -.->|Metrics| Monitoring
+
+    style Client fill:#FF9900,stroke:#232F3E,stroke-width:3px,color:#fff
+    style LB fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
+    style API1 fill:#3B48CC,stroke:#232F3E,stroke-width:2px,color:#fff
+    style API2 fill:#3B48CC,stroke:#232F3E,stroke-width:2px,color:#fff
+    style API3 fill:#3B48CC,stroke:#232F3E,stroke-width:2px,color:#fff
+
+    style Auth fill:#DD344C,stroke:#232F3E,stroke-width:2px,color:#fff
+    style RateLimit fill:#DD344C,stroke:#232F3E,stroke-width:2px,color:#fff
+    style CORS fill:#DD344C,stroke:#232F3E,stroke-width:2px,color:#fff
+    style Validator fill:#DD344C,stroke:#232F3E,stroke-width:2px,color:#fff
+
+    style AuthSvc fill:#5294CF,stroke:#232F3E,stroke-width:2px,color:#fff
+    style SentimentSvc fill:#5294CF,stroke:#232F3E,stroke-width:2px,color:#fff
+    style CacheSvc fill:#5294CF,stroke:#232F3E,stroke-width:2px,color:#fff
+    style QueueSvc fill:#5294CF,stroke:#232F3E,stroke-width:2px,color:#fff
+    style WebhookSvc fill:#5294CF,stroke:#232F3E,stroke-width:2px,color:#fff
+    style MetricsSvc fill:#5294CF,stroke:#232F3E,stroke-width:2px,color:#fff
+
+    style Worker1 fill:#759C3E,stroke:#232F3E,stroke-width:2px,color:#fff
+    style Worker2 fill:#759C3E,stroke:#232F3E,stroke-width:2px,color:#fff
+    style Worker3 fill:#759C3E,stroke:#232F3E,stroke-width:2px,color:#fff
+
+    style DB fill:#3334B9,stroke:#232F3E,stroke-width:2px,color:#fff
+    style CacheStore fill:#3334B9,stroke:#232F3E,stroke-width:2px,color:#fff
+    style QueueStore fill:#3334B9,stroke:#232F3E,stroke-width:2px,color:#fff
+
+    style Webhook1 fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
+    style Webhook2 fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
+    style Monitoring fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="color-box" style="background: #FF9900;"></div>
+                <span><strong>Cliente/External</strong><br>Interface externa</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background: #3B48CC;"></div>
+                <span><strong>API Layer</strong><br>Endpoints REST</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background: #DD344C;"></div>
+                <span><strong>Middleware</strong><br>Segurança e validação</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background: #5294CF;"></div>
+                <span><strong>Services</strong><br>Lógica de negócio</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background: #759C3E;"></div>
+                <span><strong>Workers</strong><br>Processamento assíncrono</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background: #3334B9;"></div>
+                <span><strong>Data Layer</strong><br>Persistência</span>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>🔄 Fluxo de Processamento</h3>
+            <ol>
+                <li><strong>Cliente submete análise</strong> → API recebe (202 Accepted)</li>
+                <li><strong>Validação e autenticação</strong> → JWT verificado</li>
+                <li><strong>Enfileiramento</strong> → Tarefa adicionada à fila prioritária</li>
+                <li><strong>Worker processa</strong> → Análise de sentimento executada</li>
+                <li><strong>Resultado salvo</strong> → Banco de dados atualizado</li>
+                <li><strong>Cache atualizado</strong> → Respostas futuras instantâneas</li>
+                <li><strong>Webhooks disparados</strong> → Sistemas externos notificados</li>
+                <li><strong>Cliente consulta</strong> → Resultado retornado do cache</li>
+            </ol>
+        </div>
+
+        <div class="info-box">
+            <h3>✨ Características Técnicas</h3>
+            <ul>
+                <li>🔒 <strong>Segurança:</strong> JWT, bcrypt, rate limiting, CORS</li>
+                <li>⚡ <strong>Performance:</strong> Cache distribuído, processamento assíncrono</li>
+                <li>📈 <strong>Escalabilidade:</strong> Horizontal scaling, load balancing</li>
+                <li>🛡️ <strong>Resiliência:</strong> Retry logic, dead letter queue, graceful shutdown</li>
+                <li>📊 <strong>Observabilidade:</strong> Métricas, logs, health checks</li>
+                <li>🔔 <strong>Notificações:</strong> Webhooks com retry exponencial</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>🎯 Tecnologias Utilizadas</h3>
+            <ul>
+                <li><strong>Backend:</strong> Flask 3.0 (Python)</li>
+                <li><strong>Autenticação:</strong> JWT + Bcrypt</li>
+                <li><strong>Banco de Dados:</strong> SQLite (dev) / PostgreSQL (prod)</li>
+                <li><strong>Cache:</strong> In-Memory (dev) / Redis (prod)</li>
+                <li><strong>Filas:</strong> Priority Queue (dev) / RabbitMQ (prod)</li>
+                <li><strong>Webhooks:</strong> HTTP POST com retry</li>
+                <li><strong>Testes:</strong> Pytest</li>
+            </ul>
+        </div>
+
+        <button class="print-button" onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button>
+
+        <div style="text-align: center; color: #666; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
+            <p>Sistema de Análise de Sentimentos em Tempo Real</p>
+            <p>Desenvolvido com ❤️ usando Flask, Python e as melhores práticas de arquitetura moderna</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>
