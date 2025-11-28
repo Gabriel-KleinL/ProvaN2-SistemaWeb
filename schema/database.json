@@ -1,453 +1,73 @@
 {
-  "database": "sentiment_analysis.db",
+  "database": "sentiment.db",
   "version": "1.0.0",
-  "description": "Schema do banco de dados para sistema de análise de sentimentos",
   "tables": [
     {
       "name": "users",
-      "description": "Armazena informações de usuários do sistema",
+      "description": "Usuários do sistema",
       "columns": [
         {
           "name": "id",
           "type": "INTEGER",
-          "constraints": ["PRIMARY KEY", "AUTOINCREMENT"],
-          "description": "Identificador único do usuário"
-        },
-        {
-          "name": "username",
-          "type": "TEXT",
-          "constraints": ["NOT NULL", "UNIQUE"],
-          "description": "Nome de usuário único"
+          "constraints": ["PRIMARY KEY", "AUTOINCREMENT"]
         },
         {
           "name": "email",
           "type": "TEXT",
-          "constraints": ["NOT NULL", "UNIQUE"],
-          "description": "Email do usuário (usado para login)"
+          "constraints": ["NOT NULL", "UNIQUE"]
         },
         {
           "name": "password_hash",
           "type": "TEXT",
-          "constraints": ["NOT NULL"],
-          "description": "Hash bcrypt da senha do usuário"
+          "constraints": ["NOT NULL"]
         },
         {
           "name": "created_at",
           "type": "TIMESTAMP",
-          "constraints": ["DEFAULT CURRENT_TIMESTAMP"],
-          "description": "Data de criação da conta"
-        },
-        {
-          "name": "is_active",
-          "type": "BOOLEAN",
-          "constraints": ["DEFAULT 1"],
-          "description": "Status da conta (ativo/inativo)"
-        },
-        {
-          "name": "last_login",
-          "type": "TIMESTAMP",
-          "constraints": ["NULL"],
-          "description": "Último login do usuário"
-        }
-      ],
-      "indexes": [
-        {
-          "name": "idx_users_email",
-          "columns": ["email"],
-          "unique": true
-        },
-        {
-          "name": "idx_users_username",
-          "columns": ["username"],
-          "unique": true
+          "constraints": ["DEFAULT CURRENT_TIMESTAMP"]
         }
       ]
     },
     {
       "name": "analyses",
-      "description": "Armazena análises de sentimento realizadas",
+      "description": "Análises de sentimento",
       "columns": [
         {
           "name": "id",
           "type": "TEXT",
-          "constraints": ["PRIMARY KEY"],
-          "description": "UUID único da análise"
+          "constraints": ["PRIMARY KEY"]
         },
         {
           "name": "user_id",
           "type": "INTEGER",
-          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES users(id)"],
-          "description": "ID do usuário que solicitou a análise"
+          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES users(id)"]
         },
         {
           "name": "text",
           "type": "TEXT",
-          "constraints": ["NOT NULL"],
-          "description": "Texto analisado"
+          "constraints": ["NOT NULL"]
         },
         {
           "name": "sentiment",
           "type": "TEXT",
-          "constraints": ["NULL"],
-          "description": "Classificação do sentimento (positive, negative, neutral)"
+          "constraints": ["NULL"]
         },
         {
           "name": "score",
           "type": "REAL",
-          "constraints": ["NULL"],
-          "description": "Score numérico do sentimento (-1.0 a 1.0)"
-        },
-        {
-          "name": "confidence",
-          "type": "REAL",
-          "constraints": ["NULL"],
-          "description": "Confiança da análise (0.0 a 1.0)"
-        },
-        {
-          "name": "metadata",
-          "type": "TEXT",
-          "constraints": ["NULL"],
-          "description": "Metadados adicionais em formato JSON"
+          "constraints": ["NULL"]
         },
         {
           "name": "status",
           "type": "TEXT",
-          "constraints": ["DEFAULT 'pending'"],
-          "description": "Status da análise (pending, processing, completed, failed)"
+          "constraints": ["DEFAULT 'pending'"]
         },
         {
           "name": "created_at",
           "type": "TIMESTAMP",
-          "constraints": ["DEFAULT CURRENT_TIMESTAMP"],
-          "description": "Data de criação da análise"
-        },
-        {
-          "name": "processed_at",
-          "type": "TIMESTAMP",
-          "constraints": ["NULL"],
-          "description": "Data de processamento da análise"
-        },
-        {
-          "name": "error_message",
-          "type": "TEXT",
-          "constraints": ["NULL"],
-          "description": "Mensagem de erro caso a análise falhe"
-        }
-      ],
-      "indexes": [
-        {
-          "name": "idx_analyses_user_id",
-          "columns": ["user_id"],
-          "unique": false
-        },
-        {
-          "name": "idx_analyses_status",
-          "columns": ["status"],
-          "unique": false
-        },
-        {
-          "name": "idx_analyses_created_at",
-          "columns": ["created_at"],
-          "unique": false
-        },
-        {
-          "name": "idx_analyses_sentiment",
-          "columns": ["sentiment"],
-          "unique": false
-        }
-      ]
-    },
-    {
-      "name": "webhook_configs",
-      "description": "Configurações de webhooks por usuário",
-      "columns": [
-        {
-          "name": "id",
-          "type": "INTEGER",
-          "constraints": ["PRIMARY KEY", "AUTOINCREMENT"],
-          "description": "ID único da configuração"
-        },
-        {
-          "name": "user_id",
-          "type": "INTEGER",
-          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES users(id)"],
-          "description": "ID do usuário proprietário"
-        },
-        {
-          "name": "url",
-          "type": "TEXT",
-          "constraints": ["NOT NULL"],
-          "description": "URL do webhook"
-        },
-        {
-          "name": "events",
-          "type": "TEXT",
-          "constraints": ["NOT NULL"],
-          "description": "Eventos que disparam webhook (JSON array)"
-        },
-        {
-          "name": "enabled",
-          "type": "BOOLEAN",
-          "constraints": ["DEFAULT 1"],
-          "description": "Se o webhook está ativo"
-        },
-        {
-          "name": "created_at",
-          "type": "TIMESTAMP",
-          "constraints": ["DEFAULT CURRENT_TIMESTAMP"],
-          "description": "Data de criação"
-        },
-        {
-          "name": "secret",
-          "type": "TEXT",
-          "constraints": ["NULL"],
-          "description": "Secret para validação de assinatura"
-        }
-      ],
-      "indexes": [
-        {
-          "name": "idx_webhook_configs_user_id",
-          "columns": ["user_id"],
-          "unique": false
-        }
-      ]
-    },
-    {
-      "name": "webhook_logs",
-      "description": "Log de envios de webhooks",
-      "columns": [
-        {
-          "name": "id",
-          "type": "INTEGER",
-          "constraints": ["PRIMARY KEY", "AUTOINCREMENT"],
-          "description": "ID único do log"
-        },
-        {
-          "name": "analysis_id",
-          "type": "TEXT",
-          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES analyses(id)"],
-          "description": "ID da análise relacionada"
-        },
-        {
-          "name": "webhook_config_id",
-          "type": "INTEGER",
-          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES webhook_configs(id)"],
-          "description": "ID da configuração de webhook"
-        },
-        {
-          "name": "webhook_url",
-          "type": "TEXT",
-          "constraints": ["NOT NULL"],
-          "description": "URL para qual o webhook foi enviado"
-        },
-        {
-          "name": "payload",
-          "type": "TEXT",
-          "constraints": ["NOT NULL"],
-          "description": "Payload enviado (JSON)"
-        },
-        {
-          "name": "status_code",
-          "type": "INTEGER",
-          "constraints": ["NULL"],
-          "description": "Status code HTTP retornado"
-        },
-        {
-          "name": "response_body",
-          "type": "TEXT",
-          "constraints": ["NULL"],
-          "description": "Corpo da resposta"
-        },
-        {
-          "name": "attempts",
-          "type": "INTEGER",
-          "constraints": ["DEFAULT 1"],
-          "description": "Número de tentativas de envio"
-        },
-        {
-          "name": "sent_at",
-          "type": "TIMESTAMP",
-          "constraints": ["DEFAULT CURRENT_TIMESTAMP"],
-          "description": "Data do envio"
-        },
-        {
-          "name": "success",
-          "type": "BOOLEAN",
-          "constraints": ["DEFAULT 0"],
-          "description": "Se o envio foi bem sucedido"
-        }
-      ],
-      "indexes": [
-        {
-          "name": "idx_webhook_logs_analysis_id",
-          "columns": ["analysis_id"],
-          "unique": false
-        },
-        {
-          "name": "idx_webhook_logs_sent_at",
-          "columns": ["sent_at"],
-          "unique": false
-        }
-      ]
-    },
-    {
-      "name": "metrics",
-      "description": "Métricas agregadas do sistema",
-      "columns": [
-        {
-          "name": "id",
-          "type": "INTEGER",
-          "constraints": ["PRIMARY KEY", "AUTOINCREMENT"],
-          "description": "ID único da métrica"
-        },
-        {
-          "name": "date",
-          "type": "DATE",
-          "constraints": ["NOT NULL"],
-          "description": "Data da métrica"
-        },
-        {
-          "name": "metric_type",
-          "type": "TEXT",
-          "constraints": ["NOT NULL"],
-          "description": "Tipo de métrica (daily_analyses, sentiment_distribution, etc)"
-        },
-        {
-          "name": "metric_data",
-          "type": "TEXT",
-          "constraints": ["NOT NULL"],
-          "description": "Dados da métrica em JSON"
-        },
-        {
-          "name": "created_at",
-          "type": "TIMESTAMP",
-          "constraints": ["DEFAULT CURRENT_TIMESTAMP"],
-          "description": "Data de criação"
-        }
-      ],
-      "indexes": [
-        {
-          "name": "idx_metrics_date_type",
-          "columns": ["date", "metric_type"],
-          "unique": true
-        }
-      ]
-    },
-    {
-      "name": "rate_limits",
-      "description": "Controle de rate limiting por usuário/IP",
-      "columns": [
-        {
-          "name": "id",
-          "type": "INTEGER",
-          "constraints": ["PRIMARY KEY", "AUTOINCREMENT"],
-          "description": "ID único"
-        },
-        {
-          "name": "identifier",
-          "type": "TEXT",
-          "constraints": ["NOT NULL", "UNIQUE"],
-          "description": "Identificador (user_id ou IP)"
-        },
-        {
-          "name": "request_count",
-          "type": "INTEGER",
-          "constraints": ["DEFAULT 0"],
-          "description": "Contador de requisições"
-        },
-        {
-          "name": "window_start",
-          "type": "TIMESTAMP",
-          "constraints": ["NOT NULL"],
-          "description": "Início da janela de tempo"
-        },
-        {
-          "name": "last_request",
-          "type": "TIMESTAMP",
-          "constraints": ["DEFAULT CURRENT_TIMESTAMP"],
-          "description": "Última requisição"
-        }
-      ],
-      "indexes": [
-        {
-          "name": "idx_rate_limits_identifier",
-          "columns": ["identifier"],
-          "unique": true
+          "constraints": ["DEFAULT CURRENT_TIMESTAMP"]
         }
       ]
     }
-  ],
-  "relationships": [
-    {
-      "from": "analyses",
-      "to": "users",
-      "type": "many_to_one",
-      "foreign_key": "user_id",
-      "description": "Cada análise pertence a um usuário"
-    },
-    {
-      "from": "webhook_configs",
-      "to": "users",
-      "type": "many_to_one",
-      "foreign_key": "user_id",
-      "description": "Cada configuração de webhook pertence a um usuário"
-    },
-    {
-      "from": "webhook_logs",
-      "to": "analyses",
-      "type": "many_to_one",
-      "foreign_key": "analysis_id",
-      "description": "Cada log de webhook está relacionado a uma análise"
-    },
-    {
-      "from": "webhook_logs",
-      "to": "webhook_configs",
-      "type": "many_to_one",
-      "foreign_key": "webhook_config_id",
-      "description": "Cada log de webhook está relacionado a uma configuração"
-    }
-  ],
-  "sample_data": {
-    "users": [
-      {
-        "username": "demo_user",
-        "email": "demo@example.com",
-        "password_hash": "$2b$12$hashed_password_here",
-        "is_active": true
-      }
-    ],
-    "analyses": [
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
-        "user_id": 1,
-        "text": "Este produto é incrível! Estou muito satisfeito.",
-        "sentiment": "positive",
-        "score": 0.85,
-        "confidence": 0.92,
-        "status": "completed",
-        "metadata": "{\"product_id\": \"12345\", \"source\": \"review\"}"
-      }
-    ]
-  },
-  "business_rules": {
-    "sentiment_classification": {
-      "positive": "score > 0.1",
-      "neutral": "score between -0.1 and 0.1",
-      "negative": "score < -0.1"
-    },
-    "analysis_status_flow": [
-      "pending",
-      "processing",
-      "completed|failed"
-    ],
-    "rate_limiting": {
-      "requests_per_minute": 60,
-      "requests_per_hour": 1000,
-      "requests_per_day": 10000
-    },
-    "webhook_retry_policy": {
-      "max_attempts": 3,
-      "backoff_seconds": [1, 5, 15]
-    }
-  }
+  ]
 }

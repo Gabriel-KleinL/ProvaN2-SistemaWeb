@@ -1,340 +1,238 @@
-# Sistema de Análise de Sentimentos em Tempo Real
+# Sistema de Análise de Sentimentos
 
-## 📋 Visão Geral
+Sistema web simples para análise de sentimentos em textos.
 
-Sistema web moderno para análise de sentimentos em textos com processamento assíncrono, cache distribuído e arquitetura escalável. Ideal para análise de feedbacks, reviews de produtos, comentários em redes sociais e atendimento ao cliente.
+## 📊 Estrutura
 
-## 🎯 Cenário Principal
+**3 Funções Principais:**
+1. `cadastrar_analise()` - Cadastra texto para análise
+2. `processar_fila()` - Processa análise e retorna sentimento
+3. `buscar_resultado()` - Busca resultado da análise
 
-Uma empresa de e-commerce recebe milhares de avaliações de produtos diariamente. O sistema permite:
-
-1. **Submissão de Textos**: Envio de reviews/comentários via API REST
-2. **Processamento Assíncrono**: Análise de sentimento em fila de processamento
-3. **Classificação Inteligente**: Detecta sentimentos (positivo, negativo, neutro)
-4. **Métricas em Tempo Real**: Dashboard com estatísticas agregadas
-5. **Notificações**: Webhooks para alertar sobre sentimentos negativos
-6. **Cache Distribuído**: Respostas rápidas para consultas frequentes
+**2 Schemas de Banco:**
+1. `users` - Usuários do sistema
+2. `analyses` - Análises de sentimento
 
 ## 🏗️ Arquitetura
 
 ```
-┌─────────────┐
-│   Cliente   │
-│  (Postman)  │
-└──────┬──────┘
-       │
-       ↓
-┌─────────────────────────────────────────────────┐
-│            API Gateway (Flask)                  │
-│  ┌──────────────┐  ┌─────────────────────┐    │
-│  │ Rate Limiter │  │  JWT Authentication │    │
-│  └──────────────┘  └─────────────────────┘    │
-└─────────┬───────────────────────────────────────┘
-          │
-          ↓
-┌─────────────────────────────────────────────────┐
-│              Camada de Serviços                 │
-│  ┌──────────┐  ┌──────────┐  ┌──────────────┐ │
-│  │  Cache   │  │  Queue   │  │  Sentiment   │ │
-│  │  Redis   │  │ Manager  │  │   Analyzer   │ │
-│  └──────────┘  └──────────┘  └──────────────┘ │
-└─────────┬───────────────────────────────────────┘
-          │
-          ↓
-┌─────────────────────────────────────────────────┐
-│         Worker de Processamento                 │
-│  ┌──────────────────────────────────────────┐  │
-│  │  Processa Fila de Análise de Sentimentos│  │
-│  │  - NLP Processing                        │  │
-│  │  - Score Calculation                     │  │
-│  │  - Webhook Notifications                 │  │
-│  └──────────────────────────────────────────┘  │
-└─────────┬───────────────────────────────────────┘
-          │
-          ↓
-┌─────────────────────────────────────────────────┐
-│           Camada de Persistência                │
-│  ┌──────────────┐  ┌──────────────────────┐    │
-│  │   SQLite     │  │  File-based Queue    │    │
-│  │  Database    │  │   (Simulated)        │    │
-│  └──────────────┘  └──────────────────────┘    │
-└─────────────────────────────────────────────────┘
+Cliente (Postman)
+    ↓
+API Flask
+    ↓
+FUNÇÃO 1: cadastrar_analise()
+    ↓
+Fila de Processamento
+    ↓
+Worker
+    ↓
+FUNÇÃO 2: processar_fila()
+    ↓
+Banco de Dados (SQLite)
+    ↓
+FUNÇÃO 3: buscar_resultado()
+    ↓
+Cliente recebe resultado
 ```
 
-## 🔧 Componentes e Integrações
+## 🚀 Como Usar
 
-### 1. **API Gateway (Flask)**
-- RESTful API endpoints
-- Validação de requisições
-- Serialização JSON
-- CORS habilitado
-
-### 2. **Autenticação JWT**
-- Login de usuários
-- Tokens com expiração
-- Middleware de autenticação
-- Refresh tokens
-
-### 3. **Rate Limiting**
-- Proteção contra abuso
-- Limites por IP/usuário
-- Resposta 429 Too Many Requests
-
-### 4. **Sistema de Filas**
-- Processamento assíncrono
-- Retry logic para falhas
-- Priorização de tarefas
-- Dead letter queue
-
-### 5. **Análise de Sentimentos**
-- Processamento de linguagem natural
-- Score de -1 (negativo) a +1 (positivo)
-- Detecção de palavras-chave
-- Confiança da análise
-
-### 6. **Cache Redis (Simulado)**
-- Cache de resultados
-- TTL configurável
-- Invalidação inteligente
-- Redução de latência
-
-### 7. **Banco de Dados**
-- Persistência de análises
-- Histórico de usuários
-- Métricas agregadas
-- Índices otimizados
-
-### 8. **Sistema de Webhooks**
-- Notificações em tempo real
-- Retry automático
-- Configuração por usuário
-- Payload personalizado
-
-## 📡 Endpoints da API
-
-### Autenticação
-
-#### POST /api/auth/register
-Registra novo usuário
-```json
-{
-  "username": "usuario123",
-  "email": "usuario@example.com",
-  "password": "senha_segura"
-}
-```
-
-#### POST /api/auth/login
-Autentica usuário
-```json
-{
-  "email": "usuario@example.com",
-  "password": "senha_segura"
-}
-```
-
-### Análise de Sentimentos
-
-#### POST /api/sentiment/analyze
-Submete texto para análise (requer autenticação)
-```json
-{
-  "text": "Este produto é incrível! Estou muito satisfeito com a compra.",
-  "metadata": {
-    "product_id": "12345",
-    "source": "review"
-  }
-}
-```
-
-#### GET /api/sentiment/result/{analysis_id}
-Obtém resultado de análise específica
-
-#### GET /api/sentiment/history
-Lista histórico de análises do usuário
-
-### Métricas
-
-#### GET /api/metrics/summary
-Retorna estatísticas agregadas
-- Total de análises
-- Distribuição de sentimentos
-- Média de scores
-- Análises por período
-
-#### GET /api/metrics/trends
-Tendências temporais de sentimentos
-
-### Worker
-
-#### POST /api/worker/process
-Processa fila de análises pendentes (uso interno)
-
-#### GET /api/worker/status
-Status do worker e fila
-
-### Webhooks
-
-#### POST /api/webhooks/configure
-Configura webhook para notificações
-```json
-{
-  "url": "https://seu-servidor.com/webhook",
-  "events": ["negative_sentiment", "analysis_complete"],
-  "enabled": true
-}
-```
-
-## 🚀 Como Executar
-
-### 1. Instalar Dependências
+### 1. Instalar
 ```bash
-pip install -r requirements.txt
+pip install flask flask-cors
 ```
 
-### 2. Inicializar Banco de Dados
-```bash
-python src/database.py
-```
-
-### 3. Executar API
+### 2. Executar API (Terminal 1)
 ```bash
 python src/app.py
 ```
 
-### 4. Executar Worker (em terminal separado)
+### 3. Executar Worker (Terminal 2)
 ```bash
 python src/worker.py
 ```
 
-### 5. Executar Testes
-```bash
-pytest tests/ -v
-```
+### 4. Testar no Postman
 
-## 📦 Estrutura do Projeto
-
-```
-ProvaN2-SistemaWeb/
-├── docs/
-│   ├── README.md          # Documentação principal
-│   └── arquitetura.md     # Diagrama detalhado de arquitetura
-├── schema/
-│   └── database.json      # Schema do banco de dados
-├── src/
-│   ├── app.py            # Aplicação Flask principal
-│   ├── auth.py           # Autenticação e JWT
-│   ├── cache.py          # Sistema de cache
-│   ├── database.py       # Modelos e conexão DB
-│   ├── queue_manager.py  # Gerenciador de filas
-│   ├── sentiment_analyzer.py  # Análise de sentimentos
-│   ├── webhooks.py       # Sistema de webhooks
-│   └── worker.py         # Worker de processamento
-└── tests/
-    ├── test_api.py       # Testes da API
-    ├── test_sentiment.py # Testes de análise
-    └── test_integration.py  # Testes de integração
-```
-
-## 🧪 Testando com Postman
-
-### 1. Registrar Usuário
-```
-POST http://localhost:5000/api/auth/register
+**Cadastrar Análise:**
+```http
+POST http://localhost:5000/api/analyze
 Content-Type: application/json
 
 {
-  "username": "teste",
-  "email": "teste@example.com",
-  "password": "senha123"
+  "text": "Este produto é excelente!"
 }
 ```
 
-### 2. Login
-```
-POST http://localhost:5000/api/auth/login
-Content-Type: application/json
-
+**Resposta:**
+```json
 {
-  "email": "teste@example.com",
-  "password": "senha123"
+  "message": "Análise cadastrada",
+  "analysis_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "pending"
 }
 ```
 
-Copie o `access_token` da resposta.
-
-### 3. Enviar Análise
+**Buscar Resultado:**
+```http
+GET http://localhost:5000/api/result/550e8400-e29b-41d4-a716-446655440000
 ```
-POST http://localhost:5000/api/sentiment/analyze
-Authorization: Bearer {seu_token_aqui}
-Content-Type: application/json
 
+**Resposta:**
+```json
 {
-  "text": "Produto excelente, superou minhas expectativas!",
-  "metadata": {
-    "product_id": "12345"
+  "analysis": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "text": "Este produto é excelente!",
+    "sentiment": "positive",
+    "score": 1.0,
+    "status": "completed"
   }
 }
 ```
 
-### 4. Verificar Resultado
-```
-GET http://localhost:5000/api/sentiment/result/{analysis_id}
-Authorization: Bearer {seu_token_aqui}
-```
-
-### 5. Ver Métricas
-```
-GET http://localhost:5000/api/metrics/summary
-Authorization: Bearer {seu_token_aqui}
+## 🧪 Executar Testes
+```bash
+python tests/test_funcoes.py
 ```
 
-## 🎯 Diferenciais Técnicos
+## 📁 Estrutura de Arquivos
 
-1. **Processamento Assíncrono**: Não bloqueia a API durante análises longas
-2. **Cache Inteligente**: Reduz latência em consultas repetidas
-3. **Rate Limiting**: Previne abuso e garante disponibilidade
-4. **Webhooks**: Notificações em tempo real para sistemas externos
-5. **JWT Stateless**: Autenticação escalável sem sessões
-6. **Retry Logic**: Resiliência em falhas de processamento
-7. **Métricas Agregadas**: Insights em tempo real sobre sentimentos
-8. **Arquitetura Modular**: Fácil manutenção e extensão
+```
+ProvaN2-SistemaWeb/
+├── docs/
+│   └── README.md          # Documentação
+├── schema/
+│   └── database.json      # Schema das 2 tabelas
+├── src/
+│   ├── app.py            # API Flask
+│   ├── database.py       # 2 schemas do banco
+│   ├── funcoes.py        # 3 funções principais
+│   └── worker.py         # Processador de fila
+└── tests/
+    └── test_funcoes.py   # Testes das 3 funções
+```
 
-## 📊 Casos de Uso
+## 📊 Schemas do Banco
 
-- **E-commerce**: Análise de reviews de produtos
-- **Redes Sociais**: Monitoramento de menções de marca
-- **Atendimento**: Classificação automática de tickets
-- **Pesquisas**: Análise de feedback de usuários
-- **Marketing**: Avaliação de campanhas publicitárias
+### 1. users
+```sql
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+```
 
-## 🔐 Segurança
+### 2. analyses
+```sql
+CREATE TABLE analyses (
+    id TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    text TEXT NOT NULL,
+    sentiment TEXT NULL,          -- positive, negative, neutral
+    score REAL NULL,              -- -1.0 a 1.0
+    status TEXT DEFAULT 'pending', -- pending, completed
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+)
+```
 
-- Senhas hasheadas com bcrypt
-- JWT com expiração configurável
-- Rate limiting por IP
-- Validação de entrada rigorosa
-- CORS configurável
-- SQL injection prevention
+## ⚙️ Funções Detalhadas
 
-## 📈 Escalabilidade
+### FUNÇÃO 1: cadastrar_analise(user_id, texto)
+**O que faz:**
+- Cria UUID único
+- Salva no banco (schema: analyses)
+- Adiciona na fila de processamento
+- Retorna ID da análise
 
-- Worker pode ser replicado horizontalmente
-- Cache pode ser substituído por Redis real
-- Fila pode usar RabbitMQ/Celery em produção
-- Database pode migrar para PostgreSQL
-- API pode usar load balancer
+**Exemplo:**
+```python
+from funcoes import cadastrar_analise
 
-## 🛠️ Tecnologias Utilizadas
+analysis_id = cadastrar_analise(1, "Produto excelente!")
+# Retorna: "550e8400-e29b-41d4-a716-446655440000"
+```
 
-- **Flask**: Framework web
-- **SQLite**: Banco de dados
-- **JWT**: Autenticação
-- **NLTK/TextBlob**: Processamento de linguagem natural
-- **Pytest**: Testes
-- **Werkzeug**: Hashing de senhas
-- **Threading**: Processamento paralelo
+### FUNÇÃO 2: processar_fila()
+**O que faz:**
+- Pega análise pendente da fila
+- Analisa sentimento do texto
+- Calcula score (-1.0 a 1.0)
+- Atualiza no banco
+- Retorna resultado
 
-## 📝 Licença
+**Exemplo:**
+```python
+from funcoes import processar_fila
 
-MIT License - Projeto educacional para avaliação acadêmica
+resultado = processar_fila()
+# Retorna: {'id': '...', 'sentiment': 'positive', 'score': 0.8}
+```
+
+### FUNÇÃO 3: buscar_resultado(analysis_id)
+**O que faz:**
+- Busca análise no banco
+- Retorna dados completos
+- Retorna None se não encontrado
+
+**Exemplo:**
+```python
+from funcoes import buscar_resultado
+
+resultado = buscar_resultado("550e8400-...")
+# Retorna: {'id': '...', 'text': '...', 'sentiment': 'positive', ...}
+```
+
+## 🎯 Análise de Sentimento
+
+**Palavras Positivas:**
+- bom, ótimo, excelente, amo, adorei, maravilhoso, perfeito, incrível, feliz, satisfeito, top, legal
+
+**Palavras Negativas:**
+- ruim, péssimo, horrível, odeio, terrível, mal, pior, problema, defeito, insatisfeito, raiva, lixo
+
+**Classificação:**
+- Score > 0.2 → **positive**
+- Score < -0.2 → **negative**
+- Caso contrário → **neutral**
+
+## 📈 Endpoints da API
+
+| Endpoint | Método | Descrição | Função |
+|----------|--------|-----------|--------|
+| `/` | GET | Info do sistema | - |
+| `/api/analyze` | POST | Cadastra análise | FUNÇÃO 1 |
+| `/api/result/:id` | GET | Busca resultado | FUNÇÃO 3 |
+| `/api/status` | GET | Status da fila | - |
+
+## ✅ Checklist de Avaliação
+
+- [x] 3 Funções principais implementadas
+- [x] 2 Schemas de banco definidos
+- [x] API Flask funcional
+- [x] Testável via Postman (sem UI)
+- [x] Fila de processamento assíncrono
+- [x] Testes em Python
+- [x] Documentação completa
+
+## 🎬 Para Apresentação
+
+1. **Mostre a estrutura** (4 pastas: docs, schema, src, tests)
+2. **Execute API e Worker** (2 terminais)
+3. **Teste no Postman:**
+   - POST texto positivo → mostre resultado
+   - POST texto negativo → mostre resultado
+   - POST texto neutro → mostre resultado
+4. **Execute testes:** `python tests/test_funcoes.py`
+5. **Mostre código das 3 funções** em `src/funcoes.py`
+6. **Mostre schemas** em `schema/database.json`
+
+## 📝 Tecnologias
+
+- **Backend:** Flask (Python)
+- **Banco:** SQLite
+- **Fila:** Queue (Python nativo)
+- **NLP:** Análise léxica simples
