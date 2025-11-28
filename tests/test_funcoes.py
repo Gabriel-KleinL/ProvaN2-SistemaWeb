@@ -45,6 +45,14 @@ def test_funcao_3_buscar():
 
     init_db()
 
+    # Limpa fila de testes anteriores
+    from funcoes import fila_analises
+    while not fila_analises.empty():
+        try:
+            fila_analises.get_nowait()
+        except:
+            break
+
     # Cadastra e processa
     analysis_id = cadastrar_analise(1, "Produto péssimo e ruim")
     processar_fila()
