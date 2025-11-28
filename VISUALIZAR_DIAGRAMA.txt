@@ -1,0 +1,166 @@
+╔════════════════════════════════════════════════════════════════╗
+║     🎨 COMO VER O DIAGRAMA DE ARQUITETURA ESTILO AWS         ║
+╚════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────┐
+│  ⚡ MÉTODO MAIS RÁPIDO (30 segundos)                          │
+└────────────────────────────────────────────────────────────────┘
+
+1️⃣  Abra o arquivo HTML no navegador:
+
+    Windows:
+    > start docs\arquitetura_visual.html
+
+    Mac:
+    $ open docs/arquitetura_visual.html
+
+    Linux:
+    $ xdg-open docs/arquitetura_visual.html
+
+2️⃣  Pressione F11 para tela cheia
+
+3️⃣  Pronto! Você verá:
+    ✅ Diagrama completo estilo AWS
+    ✅ Cores oficiais da AWS
+    ✅ Estatísticas do sistema
+    ✅ Legendas coloridas
+    ✅ Fluxos de dados
+    ✅ Botão para imprimir/PDF
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  🌐 MÉTODO ONLINE (sem instalar nada)                         │
+└────────────────────────────────────────────────────────────────┘
+
+1️⃣  Acesse: https://mermaid.live
+
+2️⃣  Abra o arquivo: docs/arquitetura.mermaid
+
+3️⃣  Copie todo o conteúdo (Ctrl+A, Ctrl+C)
+
+4️⃣  Cole no Mermaid Live (Ctrl+V)
+
+5️⃣  Veja a mágica acontecer! ✨
+
+6️⃣  Para salvar:
+    - Clique "Actions" → "Download PNG"
+    - Ou "Download SVG" (qualidade vetorial)
+    - Ou "Copy Image" para colar direto
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  🖼️ MÉTODO PYTHON (gera arquivo PNG)                          │
+└────────────────────────────────────────────────────────────────┘
+
+1️⃣  Instale biblioteca:
+    $ pip install diagrams
+
+2️⃣  Execute script:
+    $ python docs/generate_architecture_diagram.py
+
+3️⃣  Abra o arquivo gerado:
+    docs/arquitetura_aws.png
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  🎬 DICAS PARA APRESENTAÇÃO EM VÍDEO                          │
+└────────────────────────────────────────────────────────────────┘
+
+✅ USE: arquitetura_visual.html (visual mais bonito!)
+
+📹 Durante a gravação:
+   1. Abra o HTML no Chrome/Firefox
+   2. Pressione F11 (tela cheia)
+   3. Use Ctrl/Cmd + Plus para dar zoom
+   4. Aponte com o cursor os componentes
+   5. Destaque as integrações
+   6. Mencione as estatísticas
+
+💡 Roteiro sugerido:
+   "Como vocês podem ver neste diagrama de arquitetura
+    estilo AWS, nosso sistema possui 9 componentes principais
+    distribuídos em 6 camadas:
+
+    - Cliente interage via API Gateway
+    - Middleware faz autenticação e rate limiting
+    - Services processam a lógica de negócio
+    - Workers fazem processamento assíncrono
+    - Data Layer persiste tudo
+    - External systems recebem webhooks
+
+    No total, são mais de 18 endpoints e 12 integrações!"
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  📄 SALVAR COMO PDF (para documentação)                       │
+└────────────────────────────────────────────────────────────────┘
+
+1️⃣  Abra arquitetura_visual.html no navegador
+
+2️⃣  Pressione Ctrl+P (ou Cmd+P no Mac)
+
+3️⃣  Selecione "Salvar como PDF"
+
+4️⃣  Ajuste:
+    - Orientação: Retrato
+    - Margens: Padrão
+    - Gráficos de fundo: Ativado
+
+5️⃣  Clique "Salvar"
+
+✅ Arquivo PDF profissional criado!
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  🎨 PALETA DE CORES (estilo AWS)                              │
+└────────────────────────────────────────────────────────────────┘
+
+🟠 #FF9900 - Cliente/External (Laranja AWS)
+🔵 #3B48CC - API Gateway (Azul)
+🔴 #DD344C - Middleware (Vermelho)
+🔷 #5294CF - Services (Azul Claro)
+🟢 #759C3E - Workers (Verde)
+🔹 #3334B9 - Data Layer (Azul Escuro)
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  📊 ESTATÍSTICAS DO SISTEMA                                   │
+└────────────────────────────────────────────────────────────────┘
+
+✨ 9 Componentes principais
+✨ 6 Camadas de arquitetura
+✨ 18+ Endpoints RESTful
+✨ 12+ Integrações entre componentes
+✨ 3 Workers paralelos
+✨ 100% Funcional via Postman
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  ❓ PROBLEMAS?                                                │
+└────────────────────────────────────────────────────────────────┘
+
+❌ HTML não abre?
+   → Abra manualmente: clique duas vezes no arquivo
+
+❌ Diagrama não renderiza?
+   → Verifique conexão com internet (usa CDN)
+   → Ou use método online (Mermaid Live)
+
+❌ Cores não aparecem?
+   → Use Chrome ou Firefox (Safari pode ter bug)
+
+❌ Quer editar o diagrama?
+   → Edite: docs/arquitetura.mermaid
+   → Teste em: https://mermaid.live
+
+
+╔════════════════════════════════════════════════════════════════╗
+║                     🚀 BOA APRESENTAÇÃO!                       ║
+╚════════════════════════════════════════════════════════════════╝
+
+Arquivos relacionados:
+  📁 docs/arquitetura_visual.html      (Visualização bonita)
+  📁 docs/arquitetura.mermaid          (Código do diagrama)
+  📁 docs/VISUALIZAR_ARQUITETURA.md    (Guia detalhado)
+  📁 docs/COMO_CRIAR_DIAGRAMA.md       (Como criar/editar)
+  📁 docs/generate_architecture_diagram.py (Gera PNG)
