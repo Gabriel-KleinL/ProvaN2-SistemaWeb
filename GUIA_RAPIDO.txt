@@ -1,0 +1,216 @@
+╔════════════════════════════════════════════════════════════════╗
+║          SISTEMA SIMPLIFICADO - 3 FUNÇÕES E 2 SCHEMAS         ║
+╚════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────┐
+│  📊 RESUMO DO SISTEMA                                          │
+└────────────────────────────────────────────────────────────────┘
+
+✅ 3 FUNÇÕES PRINCIPAIS:
+   1. cadastrar_analise() - Cadastra texto
+   2. processar_fila() - Analisa sentimento
+   3. buscar_resultado() - Retorna resultado
+
+✅ 2 SCHEMAS DE BANCO:
+   1. users - Usuários
+   2. analyses - Análises
+
+✅ ESTRUTURA:
+   docs/    - Documentação
+   schema/  - database.json
+   src/     - funcoes.py (3 funções)
+   tests/   - test_funcoes.py
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  🚀 EXECUTAR (5 passos)                                        │
+└────────────────────────────────────────────────────────────────┘
+
+1️⃣  Instalar:
+    $ pip install flask flask-cors
+
+2️⃣  Inicializar banco:
+    $ python src/database.py
+
+3️⃣  Terminal 1 - API:
+    $ python src/app.py
+
+4️⃣  Terminal 2 - Worker:
+    $ python src/worker.py
+
+5️⃣  Testar no Postman (abaixo)
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  📡 TESTAR NO POSTMAN                                          │
+└────────────────────────────────────────────────────────────────┘
+
+TESTE 1: Cadastrar Análise Positiva
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+POST http://localhost:5000/api/analyze
+Content-Type: application/json
+
+{
+  "text": "Este produto é excelente e maravilhoso!"
+}
+
+Resposta:
+{
+  "analysis_id": "abc-123...",
+  "status": "pending"
+}
+
+👉 COPIE o analysis_id!
+
+
+TESTE 2: Buscar Resultado
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GET http://localhost:5000/api/result/abc-123...
+
+Resposta:
+{
+  "analysis": {
+    "id": "abc-123...",
+    "text": "Este produto é excelente e maravilhoso!",
+    "sentiment": "positive",
+    "score": 1.0,
+    "status": "completed"
+  }
+}
+
+
+TESTE 3: Análise Negativa
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+POST http://localhost:5000/api/analyze
+
+{
+  "text": "Produto péssimo e horrível"
+}
+
+Resultado esperado: sentiment = "negative"
+
+
+TESTE 4: Análise Neutra
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+POST http://localhost:5000/api/analyze
+
+{
+  "text": "O produto chegou hoje"
+}
+
+Resultado esperado: sentiment = "neutral"
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  🧪 EXECUTAR TESTES AUTOMATIZADOS                             │
+└────────────────────────────────────────────────────────────────┘
+
+$ python tests/test_funcoes.py
+
+Saída esperada:
+✓ Análise cadastrada
+✓ Processado: positive
+✓ Resultado encontrado
+✓ Todos os testes passaram!
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  📁 ARQUIVOS PRINCIPAIS                                        │
+└────────────────────────────────────────────────────────────────┘
+
+src/funcoes.py         ← 3 FUNÇÕES PRINCIPAIS AQUI! 🌟
+schema/database.json   ← 2 SCHEMAS DO BANCO
+src/app.py            ← API Flask
+src/worker.py         ← Processador
+tests/test_funcoes.py ← Testes
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  🎬 ROTEIRO PARA APRESENTAÇÃO (5 min)                         │
+└────────────────────────────────────────────────────────────────┘
+
+1. Mostrar estrutura de pastas (1 min)
+   - 4 pastas: docs, schema, src, tests ✓
+
+2. Abrir src/funcoes.py (1 min)
+   - Mostrar FUNÇÃO 1: cadastrar_analise()
+   - Mostrar FUNÇÃO 2: processar_fila()
+   - Mostrar FUNÇÃO 3: buscar_resultado()
+
+3. Abrir schema/database.json (30 seg)
+   - Mostrar SCHEMA 1: users
+   - Mostrar SCHEMA 2: analyses
+
+4. Executar sistema (1 min)
+   - Terminal 1: python src/app.py
+   - Terminal 2: python src/worker.py
+
+5. Testar no Postman (2 min)
+   - POST análise positiva → mostrar resultado
+   - POST análise negativa → mostrar resultado
+   - Destacar sentimento detectado
+
+6. Executar testes (30 seg)
+   - python tests/test_funcoes.py
+   - Mostrar todos passando
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  ✅ CHECKLIST DE REQUISITOS                                   │
+└────────────────────────────────────────────────────────────────┘
+
+[✓] 3 Funções principais em Python
+[✓] 2 Schemas de banco (JSON)
+[✓] Framework Flask implementado
+[✓] Funcional via Postman (sem UI)
+[✓] Fila de processamento
+[✓] Testes em Python
+[✓] Documentação em docs/
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  📊 COMO AS 3 FUNÇÕES FUNCIONAM                               │
+└────────────────────────────────────────────────────────────────┘
+
+FUNÇÃO 1: cadastrar_analise(user_id, texto)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Gera UUID único
+2. Salva no banco (tabela analyses)
+3. Adiciona tarefa na fila
+4. Retorna ID da análise
+
+FUNÇÃO 2: processar_fila()
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Pega tarefa da fila
+2. Conta palavras positivas e negativas
+3. Calcula score (-1 a +1)
+4. Classifica sentimento
+5. Atualiza banco com resultado
+
+FUNÇÃO 3: buscar_resultado(analysis_id)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Consulta banco pelo ID
+2. Retorna dados completos da análise
+3. Inclui: texto, sentimento, score, status
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  🎯 PONTOS FORTES PARA DESTACAR                               │
+└────────────────────────────────────────────────────────────────┘
+
+✨ Sistema simples mas funcional
+✨ Processamento assíncrono (fila + worker)
+✨ 2 schemas com relacionamento (FK)
+✨ 3 funções bem definidas
+✨ Testável sem interface
+✨ Análise de sentimento real
+✨ Código limpo e organizado
+
+
+╔════════════════════════════════════════════════════════════════╗
+║                    BOA APRESENTAÇÃO! 🚀                        ║
+╚════════════════════════════════════════════════════════════════╝
